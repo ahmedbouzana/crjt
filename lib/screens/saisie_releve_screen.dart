@@ -1,10 +1,10 @@
+import 'package:crjt/services/test_pdf_export_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:printing/printing.dart';
 import '../models/app_models.dart';
 import '../services/hive_service.dart';
 import '../services/releve_calculator.dart';
-import '../services/pdf_export_service.dart';
 import '../theme/app_theme.dart';
 import 'tabs/tab_absences.dart';
 import 'tabs/tab_imputations.dart';
@@ -82,7 +82,7 @@ class _SaisieReleveScreenState extends State<SaisieReleveScreen>
     try {
       if (_dirty) await _save();
 
-      final service = PdfExportService(
+      final service = TestPdfExportService(
         settings: _settings,
         employe: widget.employe,
         releve: _releve,
@@ -95,11 +95,13 @@ class _SaisieReleveScreenState extends State<SaisieReleveScreen>
       if (mounted) {
         // Ouvrir le dialogue impression/aperçu/sauvegarde natif
         await Printing.layoutPdf(
-          onLayout: (_) async => file.readAsBytesSync(),
+          onLayout: (_) => file.readAsBytes(),
           name: file.path.split('/').last,
         );
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('Erreur export PDF : $e');
+      debugPrint('StackTrace : $stackTrace');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
