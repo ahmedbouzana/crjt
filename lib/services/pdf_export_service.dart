@@ -160,7 +160,7 @@ class PdfExportService {
                 mainAxisAlignment: pw.MainAxisAlignment.center,
                 children: [
                   pw.Text(
-                    'COMPTE – RENDU',
+                    'COMPTE - RENDU',
                     style: _s(9, b: true),
                     textAlign: pw.TextAlign.center,
                   ),

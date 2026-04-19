@@ -93,12 +93,44 @@ class _SaisieReleveScreenState extends State<SaisieReleveScreen>
       final file = await service.generate();
 
       if (mounted) {
+        await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => Scaffold(
+              appBar: AppBar(title: const Text('Aperçu PDF')),
+              body: PdfPreview(
+                build: (_) => file.readAsBytes(),
+                canChangePageFormat: false,
+                canChangeOrientation: false,
+                canDebug: false,
+                allowSharing: true,
+                allowPrinting: false,
+                useActions: true,
+                maxPageWidth: 700, // ← limite la largeur max d'affichage
+                previewPageMargin: const EdgeInsets.all(8),
+                pdfPreviewPageDecoration: const BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 4,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      }
+
+      /* if (mounted) {
         // Ouvrir le dialogue impression/aperçu/sauvegarde natif
         await Printing.layoutPdf(
           onLayout: (_) => file.readAsBytes(),
           name: file.path.split('/').last,
         );
-      }
+      } */
     } catch (e, stackTrace) {
       debugPrint('Erreur export PDF : $e');
       debugPrint('StackTrace : $stackTrace');

@@ -25,7 +25,7 @@ class TestPdfExportService {
   pw.Font get _f => pw.Font.helvetica();
   pw.Font get _fb => pw.Font.helveticaBold();
 
-  pw.TextStyle _s(double sz, {bool b = false}) =>
+  pw.TextStyle _s({double sz = 10, bool b = false}) =>
       pw.TextStyle(font: b ? _fb : _f, fontSize: sz);
 
   Future<File> generate() async {
@@ -44,7 +44,7 @@ class TestPdfExportService {
         margin: const pw.EdgeInsets.all(10),
         build: (ctx) => pw.Column(
           crossAxisAlignment: pw.CrossAxisAlignment.stretch,
-          children: [_entete(logo), pw.SizedBox(height: 3)],
+          children: [_entete(logo), pw.SizedBox(height: 3), _tableau()],
         ),
       ),
     );
@@ -87,10 +87,144 @@ class TestPdfExportService {
             alignment: pw.Alignment.center,
             child: pw.Text(
               'Région de Transport de l\'Électricité Blida',
-              style: _s(8, b: true),
+              style: _s(b: true),
               textAlign: pw.TextAlign.center,
             ),
           );
+  }
+
+  // ── Tableau1 ────────────────────────────────────────────────────────────────
+  pw.Widget _tableau() {
+    const double rowHeight = 0.2 * PdfPageFormat.inch;
+    final border = pw.TableBorder.all(width: 0.5, color: PdfColors.black);
+
+    pw.Widget _cell(
+      pw.Widget child, {
+      double? height,
+      pw.Alignment align = pw.Alignment.centerLeft,
+    }) {
+      return pw.Container(
+        height: height ?? rowHeight,
+        alignment: align,
+        padding: const pw.EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+        child: child,
+      );
+    }
+
+    pw.Widget _txt(String label, String value, {double? fontSize}) {
+      return pw.RichText(
+        text: pw.TextSpan(
+          children: [
+            pw.TextSpan(
+              text: label,
+              style: _s(sz: fontSize ?? 10, b: true),
+            ),
+            pw.TextSpan(
+              text: value,
+              style: _s(sz: fontSize ?? 10),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return pw.Row(
+      crossAxisAlignment: pw.CrossAxisAlignment.stretch,
+      children: [
+        // ── Tableau gauche ──────────────────────────────────────────
+        pw.Expanded(
+          child: pw.Table(
+            border: pw.TableBorder.all(width: 0.5, color: PdfColors.black),
+            children: [
+              pw.TableRow(
+                children: [
+                  pw.Container(
+                    height: rowHeight * 5,
+                    padding: const pw.EdgeInsets.symmetric(
+                      horizontal: 4,
+                      vertical: 2,
+                    ),
+                    child: pw.Column(
+                      mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        _txt('UNITE :   ', settings.unite),
+                        _txt('SERVICE : ', settings.service),
+                        _txt('CODE DE SERVICE : ', employe.codeService),
+                        _txt('MATRICULE N° ', employe.matricule),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+
+        // ── Tableau centre — sans border ────────────────────────────
+        pw.Expanded(
+          child: pw.Table(
+            border: const pw.TableBorder(), // ← aucune border
+            children: [
+              pw.TableRow(
+                children: [
+                  pw.Container(
+                    height: rowHeight * 5,
+                    padding: const pw.EdgeInsets.symmetric(
+                      horizontal: 4,
+                      vertical: 2,
+                    ),
+                    child: pw.Column(
+                      mainAxisAlignment: pw.MainAxisAlignment.center,
+                      crossAxisAlignment: pw.CrossAxisAlignment.center,
+                      children: [
+                        pw.Text('COMPTE RENDU', style: _s(sz: 14, b: true)),
+                        pw.Text(
+                          'JOURNALIER DE TRAVAIL',
+                          style: _s(sz: 14, b: true),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+
+        // ── Tableau droite ──────────────────────────────────────────
+        pw.Expanded(
+          child: pw.Table(
+            border: pw.TableBorder.all(width: 0.5, color: PdfColors.black),
+            children: [
+              pw.TableRow(
+                children: [
+                  pw.Container(
+                    height: rowHeight * 5,
+                    padding: const pw.EdgeInsets.symmetric(
+                      horizontal: 4,
+                      vertical: 2,
+                    ),
+                    child: pw.Column(
+                      mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        _txt('NOM ET PRÉNOMS : ', employe.nomPrenoms),
+                        _txt('Emploi : ', employe.emploi),
+                        _txt(
+                          'MOIS : ',
+                          '${_nomMois(mois).toUpperCase()} $annee',
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 
   String _nomMois(int m) {
