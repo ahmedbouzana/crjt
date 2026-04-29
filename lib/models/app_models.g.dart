@@ -1,98 +1,154 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// Manual adapters for Hive types
 
 part of 'app_models.dart';
 
-// ─── JourFerie Adapter ────────────────────────────────────────────────────────
+// **************************************************************************
+// TypeAdapterGenerator
+// **************************************************************************
+
 class JourFerieAdapter extends TypeAdapter<JourFerie> {
   @override
   final int typeId = 0;
 
   @override
   JourFerie read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
     return JourFerie(
-      description: reader.read() as String,
-      dateDebut: reader.read() as DateTime,
-      dateFin: reader.read() as DateTime,
+      description: fields[0] as String,
+      dateDebut: fields[1] as DateTime,
+      dateFin: fields[2] as DateTime,
     );
   }
 
   @override
   void write(BinaryWriter writer, JourFerie obj) {
-    writer.write(obj.description);
-    writer.write(obj.dateDebut);
-    writer.write(obj.dateFin);
+    writer
+      ..writeByte(3)
+      ..writeByte(0)
+      ..write(obj.description)
+      ..writeByte(1)
+      ..write(obj.dateDebut)
+      ..writeByte(2)
+      ..write(obj.dateFin);
   }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is JourFerieAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
 }
 
-// ─── TauxHS Adapter ──────────────────────────────────────────────────────────
 class TauxHSAdapter extends TypeAdapter<TauxHS> {
   @override
-  final int typeId = 1;
+  final int typeId = 31;
 
   @override
   TauxHS read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
     return TauxHS(
-      jourOuvrJour: reader.read() as double,
-      jourOuvrNuit: reader.read() as double,
-      jourFerieJour: reader.read() as double,
-      jourFerieNuit: reader.read() as double,
+      jourOuvrJour: fields[0] as double,
+      jourOuvrNuit: fields[1] as double,
+      jourFerieJour: fields[2] as double,
+      jourFerieNuit: fields[3] as double,
     );
   }
 
   @override
   void write(BinaryWriter writer, TauxHS obj) {
-    writer.write(obj.jourOuvrJour);
-    writer.write(obj.jourOuvrNuit);
-    writer.write(obj.jourFerieJour);
-    writer.write(obj.jourFerieNuit);
+    writer
+      ..writeByte(4)
+      ..writeByte(0)
+      ..write(obj.jourOuvrJour)
+      ..writeByte(1)
+      ..write(obj.jourOuvrNuit)
+      ..writeByte(2)
+      ..write(obj.jourFerieJour)
+      ..writeByte(3)
+      ..write(obj.jourFerieNuit);
   }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TauxHSAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
 }
 
-// ─── CodeMotif Adapter ───────────────────────────────────────────────────────
 class CodeMotifAdapter extends TypeAdapter<CodeMotif> {
   @override
   final int typeId = 2;
 
   @override
   CodeMotif read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
     return CodeMotif(
-      code: reader.read() as String,
-      libelle: reader.read() as String,
+      code: fields[0] as String,
+      libelle: fields[1] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, CodeMotif obj) {
-    writer.write(obj.code);
-    writer.write(obj.libelle);
+    writer
+      ..writeByte(2)
+      ..writeByte(0)
+      ..write(obj.code)
+      ..writeByte(1)
+      ..write(obj.libelle);
   }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CodeMotifAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
 }
 
-// ─── AppSettings Adapter ─────────────────────────────────────────────────────
 class AppSettingsAdapter extends TypeAdapter<AppSettings> {
   @override
-  final int typeId = 3;
+  final int typeId = 30;
 
   @override
   AppSettings read(BinaryReader reader) {
-    final numFields = reader.readByte();
+    final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
-      for (int i = 0; i < numFields; i++) reader.readByte(): reader.read(),
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return AppSettings(
       headerImage: (fields[0] as List?)?.cast<int>(),
-      unite: fields[1] as String? ?? 'STEOS/RTE BLIDA',
-      service: fields[2] as String? ?? 'District CHLEF',
-      adresse: fields[3] as String? ?? '',
-      telephone: fields[4] as String? ?? '',
+      unite: fields[1] as String,
+      service: fields[2] as String,
+      adresse: fields[3] as String,
+      telephone: fields[4] as String,
       localites: (fields[5] as List?)?.cast<String>(),
       ramadanDebut: fields[6] as DateTime?,
       ramadanFin: fields[7] as DateTime?,
-      heuresRamadan: fields[8] as int? ?? 7,
-      heuresNormales: fields[9] as int? ?? 8,
+      heuresRamadan: fields[8] as int,
+      heuresNormales: fields[9] as int,
       joursFeries: (fields[10] as List?)?.cast<JourFerie>(),
-      taux: fields[11] as TauxHS? ?? TauxHS(),
+      taux: fields[11] as TauxHS?,
       codesMotifs: (fields[12] as List?)?.cast<CodeMotif>(),
     );
   }
@@ -128,18 +184,27 @@ class AppSettingsAdapter extends TypeAdapter<AppSettings> {
       ..writeByte(12)
       ..write(obj.codesMotifs);
   }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AppSettingsAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
 }
 
-// ─── Employe Adapter ─────────────────────────────────────────────────────────
 class EmployeAdapter extends TypeAdapter<Employe> {
   @override
   final int typeId = 4;
 
   @override
   Employe read(BinaryReader reader) {
-    final numFields = reader.readByte();
+    final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
-      for (int i = 0; i < numFields; i++) reader.readByte(): reader.read(),
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Employe(
       id: fields[0] as String,
@@ -165,109 +230,187 @@ class EmployeAdapter extends TypeAdapter<Employe> {
       ..writeByte(4)
       ..write(obj.codeService);
   }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is EmployeAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
 }
 
-// ─── PlageDate Adapter ───────────────────────────────────────────────────────
 class PlageDateAdapter extends TypeAdapter<PlageDate> {
   @override
   final int typeId = 5;
 
   @override
   PlageDate read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
     return PlageDate(
-      debut: reader.read() as DateTime,
-      fin: reader.read() as DateTime,
+      debut: fields[0] as DateTime,
+      fin: fields[1] as DateTime,
+      motif: fields[2] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, PlageDate obj) {
-    writer.write(obj.debut);
-    writer.write(obj.fin);
+    writer
+      ..writeByte(3)
+      ..writeByte(0)
+      ..write(obj.debut)
+      ..writeByte(1)
+      ..write(obj.fin)
+      ..writeByte(2)
+      ..write(obj.motif);
   }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is PlageDateAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
 }
 
-// ─── PlageDatetime Adapter ───────────────────────────────────────────────────
 class PlageDatetimeAdapter extends TypeAdapter<PlageDatetime> {
   @override
   final int typeId = 6;
 
   @override
   PlageDatetime read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
     return PlageDatetime(
-      debut: reader.read() as DateTime,
-      fin: reader.read() as DateTime,
+      debut: fields[0] as DateTime,
+      fin: fields[1] as DateTime,
     );
   }
 
   @override
   void write(BinaryWriter writer, PlageDatetime obj) {
-    writer.write(obj.debut);
-    writer.write(obj.fin);
+    writer
+      ..writeByte(2)
+      ..writeByte(0)
+      ..write(obj.debut)
+      ..writeByte(1)
+      ..write(obj.fin);
   }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is PlageDatetimeAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
 }
 
-// ─── Imputation Adapter ──────────────────────────────────────────────────────
 class ImputationAdapter extends TypeAdapter<Imputation> {
   @override
   final int typeId = 7;
 
   @override
   Imputation read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
     return Imputation(
-      localite: reader.read() as String,
-      plages: (reader.read() as List).cast<PlageDatetime>(),
+      localite: fields[0] as String,
+      plages: (fields[1] as List).cast<PlageDatetime>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, Imputation obj) {
-    writer.write(obj.localite);
-    writer.write(obj.plages);
+    writer
+      ..writeByte(2)
+      ..writeByte(0)
+      ..write(obj.localite)
+      ..writeByte(1)
+      ..write(obj.plages);
   }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ImputationAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
 }
 
-// ─── HeureSupp Adapter ───────────────────────────────────────────────────────
 class HeureSuppAdapter extends TypeAdapter<HeureSupp> {
   @override
   final int typeId = 8;
 
   @override
   HeureSupp read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
     return HeureSupp(
-      debut: reader.read() as DateTime,
-      fin: reader.read() as DateTime,
-      localite: reader.read() as String,
+      debut: fields[0] as DateTime,
+      fin: fields[1] as DateTime,
+      localite: fields[2] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, HeureSupp obj) {
-    writer.write(obj.debut);
-    writer.write(obj.fin);
-    writer.write(obj.localite);
+    writer
+      ..writeByte(3)
+      ..writeByte(0)
+      ..write(obj.debut)
+      ..writeByte(1)
+      ..write(obj.fin)
+      ..writeByte(2)
+      ..write(obj.localite);
   }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is HeureSuppAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
 }
 
-// ─── Releve Adapter ──────────────────────────────────────────────────────────
 class ReleveAdapter extends TypeAdapter<Releve> {
   @override
   final int typeId = 9;
 
   @override
   Releve read(BinaryReader reader) {
-    final numFields = reader.readByte();
+    final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
-      for (int i = 0; i < numFields; i++) reader.readByte(): reader.read(),
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Releve(
       employeId: fields[0] as String,
       mois: fields[1] as int,
       annee: fields[2] as int,
-      absencesCM: (fields[3] as List?)?.cast<PlageDate>(),
-      absencesCP: (fields[4] as List?)?.cast<PlageDate>(),
-      absencesCA: (fields[5] as List?)?.cast<PlageDate>(),
-      absencesFM: (fields[6] as List?)?.cast<PlageDate>(),
+      absences: (fields[3] as List?)?.cast<PlageDate>(),
       imputations: (fields[7] as List?)?.cast<Imputation>(),
       heuresSupp: (fields[8] as List?)?.cast<HeureSupp>(),
       astreintes: (fields[9] as List?)?.cast<PlageDate>(),
@@ -277,7 +420,7 @@ class ReleveAdapter extends TypeAdapter<Releve> {
   @override
   void write(BinaryWriter writer, Releve obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.employeId)
       ..writeByte(1)
@@ -285,13 +428,7 @@ class ReleveAdapter extends TypeAdapter<Releve> {
       ..writeByte(2)
       ..write(obj.annee)
       ..writeByte(3)
-      ..write(obj.absencesCM)
-      ..writeByte(4)
-      ..write(obj.absencesCP)
-      ..writeByte(5)
-      ..write(obj.absencesCA)
-      ..writeByte(6)
-      ..write(obj.absencesFM)
+      ..write(obj.absences)
       ..writeByte(7)
       ..write(obj.imputations)
       ..writeByte(8)
@@ -299,4 +436,14 @@ class ReleveAdapter extends TypeAdapter<Releve> {
       ..writeByte(9)
       ..write(obj.astreintes);
   }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ReleveAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
 }

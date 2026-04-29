@@ -327,11 +327,7 @@ class _ReleveCard extends StatelessWidget {
       0,
       (s, i) => s + i.plages.length,
     );
-    final nbAbsences =
-        releve.absencesCM.length +
-        releve.absencesCP.length +
-        releve.absencesCA.length +
-        releve.absencesFM.length;
+    final nbAbsences = releve.absences.length;
     final nbHS = releve.heuresSupp.length;
 
     return Container(

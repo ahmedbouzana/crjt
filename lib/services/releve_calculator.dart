@@ -206,6 +206,14 @@ class ReleveCalculator {
   }
 
   double _heuresAbsenceJour(DateTime date) {
+    final motif = releve.motifAbsencePourJour(date);
+    if (motif != null && motif != 'RN' && motif != 'JF') {
+      return settings.heuresNormales.toDouble();
+    }
+    return 0;
+  }
+
+  /* double _heuresAbsenceJour(DateTime date) {
     for (final p in [
       ...releve.absencesCM,
       ...releve.absencesCP,
@@ -219,7 +227,7 @@ class ReleveCalculator {
       }
     }
     return 0;
-  }
+  } */
 
   int _daysInMonth(int y, int m) => DateTime(y, m + 1, 0).day;
 

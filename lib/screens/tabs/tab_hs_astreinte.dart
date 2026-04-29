@@ -418,15 +418,21 @@ class TabHsAstreinte extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
+                if (debut == null || fin == null) return;
+
                 final p = PlageDate(
                   debut: debut,
                   fin: fin.isBefore(debut) ? debut : fin,
+                  motif: 'AST', // ← Motif fixe pour les astreintes
                 );
+
                 final list = List<PlageDate>.from(releve.astreintes);
-                if (idx == null)
+                if (idx == null) {
                   list.add(p);
-                else
+                } else {
                   list[idx] = p;
+                }
+
                 onChange(_copy(astreintes: list));
                 Navigator.pop(ctx);
               },
@@ -443,10 +449,7 @@ class TabHsAstreinte extends StatelessWidget {
         employeId: releve.employeId,
         mois: releve.mois,
         annee: releve.annee,
-        absencesCM: List.from(releve.absencesCM),
-        absencesCP: List.from(releve.absencesCP),
-        absencesCA: List.from(releve.absencesCA),
-        absencesFM: List.from(releve.absencesFM),
+        absences: List.from(releve.absences), // ← Changé
         imputations: List.from(releve.imputations),
         heuresSupp: heuresSupp ?? List.from(releve.heuresSupp),
         astreintes: astreintes ?? List.from(releve.astreintes),

@@ -6,7 +6,10 @@ import 'theme/app_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialisation propre de Hive
   await HiveService.init();
+
   runApp(const CrjtApp());
 }
 

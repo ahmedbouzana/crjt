@@ -134,10 +134,7 @@ class TabImputations extends StatelessWidget {
     employeId: releve.employeId,
     mois: releve.mois,
     annee: releve.annee,
-    absencesCM: List.from(releve.absencesCM),
-    absencesCP: List.from(releve.absencesCP),
-    absencesCA: List.from(releve.absencesCA),
-    absencesFM: List.from(releve.absencesFM),
+    absences: List.from(releve.absences), // ← Changé
     imputations: imputations ?? List.from(releve.imputations),
     heuresSupp: List.from(releve.heuresSupp),
     astreintes: List.from(releve.astreintes),

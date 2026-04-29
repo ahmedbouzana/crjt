@@ -27,16 +27,16 @@ class JourFerie extends HiveObject {
 }
 
 // ─── Taux Heures Supplémentaires ─────────────────────────────────────────────
-@HiveType(typeId: 1)
+@HiveType(typeId: 31)
 class TauxHS extends HiveObject {
   @HiveField(0)
-  double jourOuvrJour; // 1.55  (05h–21h)
+  double jourOuvrJour;
   @HiveField(1)
-  double jourOuvrNuit; // 2.10  (21h–05h)
+  double jourOuvrNuit;
   @HiveField(2)
-  double jourFerieJour; // 1.825 (05h–21h)
+  double jourFerieJour;
   @HiveField(3)
-  double jourFerieNuit; // 2.375 (21h–05h)
+  double jourFerieNuit;
 
   TauxHS({
     this.jourOuvrJour = 1.55,
@@ -57,11 +57,11 @@ class CodeMotif extends HiveObject {
   CodeMotif({required this.code, required this.libelle});
 }
 
-// ─── Paramètres globaux de l'app ──────────────────────────────────────────────
-@HiveType(typeId: 3)
+// ─── Paramètres globaux ───────────────────────────────────────────────────────
+@HiveType(typeId: 30)
 class AppSettings extends HiveObject {
   @HiveField(0)
-  List<int>? headerImage; // bytes de l'image
+  List<int>? headerImage;
   @HiveField(1)
   String unite;
   @HiveField(2)
@@ -77,9 +77,9 @@ class AppSettings extends HiveObject {
   @HiveField(7)
   DateTime? ramadanFin;
   @HiveField(8)
-  int heuresRamadan; // défaut 7
+  int heuresRamadan;
   @HiveField(9)
-  int heuresNormales; // défaut 8
+  int heuresNormales;
   @HiveField(10)
   List<JourFerie> joursFeries;
   @HiveField(11)
@@ -110,9 +110,9 @@ class AppSettings extends HiveObject {
     CodeMotif(code: 'JF', libelle: 'Jour Férié'),
     CodeMotif(code: 'CM', libelle: 'Congé Maladie'),
     CodeMotif(code: 'CP', libelle: 'Congé Payé'),
-    CodeMotif(code: 'FM', libelle: 'Formation'),
     CodeMotif(code: 'CA', libelle: 'Congé Annuel'),
-    CodeMotif(code: 'RN', libelle: 'Weekend (Ven/Sam)'),
+    CodeMotif(code: 'CS', libelle: 'Congé sans solde'),
+    CodeMotif(code: 'FM', libelle: 'Formation'),
   ];
 }
 
@@ -139,15 +139,17 @@ class Employe extends HiveObject {
   });
 }
 
-// ─── Plage de dates (jours entiers) ──────────────────────────────────────────
+// ─── PlageDate avec Motif (NOUVELLE STRUCTURE) ───────────────────────────────
 @HiveType(typeId: 5)
 class PlageDate {
   @HiveField(0)
   DateTime debut;
   @HiveField(1)
   DateTime fin;
+  @HiveField(2)
+  String motif; // ← 'CM', 'CA', 'CS', 'AT', etc.
 
-  PlageDate({required this.debut, required this.fin});
+  PlageDate({required this.debut, required this.fin, required this.motif});
 
   bool containsDate(DateTime d) {
     final day = DateTime(d.year, d.month, d.day);
@@ -168,7 +170,7 @@ class PlageDate {
   }
 }
 
-// ─── Plage datetime (heures précises) ────────────────────────────────────────
+// ─── Autres classes (inchangées) ─────────────────────────────────────────────
 @HiveType(typeId: 6)
 class PlageDatetime {
   @HiveField(0)
@@ -179,11 +181,9 @@ class PlageDatetime {
   PlageDatetime({required this.debut, required this.fin});
 
   Duration get duree => fin.difference(debut);
-
   double get heures => duree.inMinutes / 60.0;
 }
 
-// ─── Imputation (localité + plages horaires) ─────────────────────────────────
 @HiveType(typeId: 7)
 class Imputation {
   @HiveField(0)
@@ -198,6 +198,7 @@ class Imputation {
     double total = 0;
     final jourDate = DateTime(jour.year, jour.month, jour.day);
     final lendemain = jourDate.add(const Duration(days: 1));
+
     for (final p in plages) {
       // intersection de la plage avec la journée
       final start = p.debut.isBefore(jourDate) ? jourDate : p.debut;
@@ -210,7 +211,6 @@ class Imputation {
   }
 }
 
-// ─── Heure Supplémentaire ─────────────────────────────────────────────────────
 @HiveType(typeId: 8)
 class HeureSupp {
   @HiveField(0)
@@ -225,7 +225,7 @@ class HeureSupp {
   double get heures => fin.difference(debut).inMinutes / 60.0;
 }
 
-// ─── Relevé mensuel d'un employé ─────────────────────────────────────────────
+// ─── Releve ──────────────────────────────────────────────────────────────────
 @HiveType(typeId: 9)
 class Releve extends HiveObject {
   @HiveField(0)
@@ -234,22 +234,14 @@ class Releve extends HiveObject {
   int mois;
   @HiveField(2)
   int annee;
-  // Absences par type
+
   @HiveField(3)
-  List<PlageDate> absencesCM; // Congé Maladie
-  @HiveField(4)
-  List<PlageDate> absencesCP; // Congé Payé
-  @HiveField(5)
-  List<PlageDate> absencesCA; // Congé Annuel
-  @HiveField(6)
-  List<PlageDate> absencesFM; // Formation
-  // Imputations par localité
+  List<PlageDate> absences; // ← Une seule liste maintenant
+
   @HiveField(7)
   List<Imputation> imputations;
-  // Heures supplémentaires
   @HiveField(8)
   List<HeureSupp> heuresSupp;
-  // Indemnités astreinte
   @HiveField(9)
   List<PlageDate> astreintes;
 
@@ -257,48 +249,41 @@ class Releve extends HiveObject {
     required this.employeId,
     required this.mois,
     required this.annee,
-    List<PlageDate>? absencesCM,
-    List<PlageDate>? absencesCP,
-    List<PlageDate>? absencesCA,
-    List<PlageDate>? absencesFM,
+    List<PlageDate>? absences,
     List<Imputation>? imputations,
     List<HeureSupp>? heuresSupp,
     List<PlageDate>? astreintes,
-  }) : absencesCM = absencesCM ?? [],
-       absencesCP = absencesCP ?? [],
-       absencesCA = absencesCA ?? [],
-       absencesFM = absencesFM ?? [],
+  }) : absences = absences ?? [],
        imputations = imputations ?? [],
        heuresSupp = heuresSupp ?? [],
        astreintes = astreintes ?? [];
 
+  Releve copyWith({
+    List<PlageDate>? absences,
+    List<Imputation>? imputations,
+    List<HeureSupp>? heuresSupp,
+    List<PlageDate>? astreintes,
+  }) {
+    return Releve(
+      employeId: employeId,
+      mois: mois,
+      annee: annee,
+      absences: absences ?? this.absences,
+      imputations: imputations ?? this.imputations,
+      heuresSupp: heuresSupp ?? this.heuresSupp,
+      astreintes: astreintes ?? this.astreintes,
+    );
+  }
+
   String get cleHive =>
       '${employeId}_${annee}_${mois.toString().padLeft(2, '0')}';
 
-  bool absencePourJour(DateTime jour) {
-    for (final p in [
-      ...absencesCM,
-      ...absencesCP,
-      ...absencesCA,
-      ...absencesFM,
-    ]) {
-      if (p.containsDate(jour)) return true;
-    }
-    return false;
-  }
+  bool absencePourJour(DateTime jour) => motifAbsencePourJour(jour) != null;
 
   String? motifAbsencePourJour(DateTime jour) {
-    for (final p in absencesCM) {
-      if (p.containsDate(jour)) return 'CM';
-    }
-    for (final p in absencesCP) {
-      if (p.containsDate(jour)) return 'CP';
-    }
-    for (final p in absencesCA) {
-      if (p.containsDate(jour)) return 'CA';
-    }
-    for (final p in absencesFM) {
-      if (p.containsDate(jour)) return 'FM';
+    final day = DateTime(jour.year, jour.month, jour.day);
+    for (final p in absences) {
+      if (p.containsDate(day)) return p.motif;
     }
     return null;
   }

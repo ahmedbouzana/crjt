@@ -1,7 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../../../models/app_models.dart';
-import '../../../../theme/app_theme.dart';
+
+import '../../models/app_models.dart';
+import '../../theme/app_theme.dart';
+
+class AbsenceType {
+  final String code;
+  final String libelle;
+  final Color color;
+
+  const AbsenceType({
+    required this.code,
+    required this.libelle,
+    required this.color,
+  });
+}
+
+class AbsenceCategory {
+  final String title;
+  final List<AbsenceType> types;
+
+  const AbsenceCategory({required this.title, required this.types});
+}
 
 class TabAbsences extends StatelessWidget {
   final Releve releve;
@@ -18,7 +38,183 @@ class TabAbsences extends StatelessWidget {
     required this.onChange,
   });
 
-  Releve get _r => releve;
+  static final List<AbsenceCategory> _categories = [
+    AbsenceCategory(
+      title: '🟢 Congés légaux',
+      types: [
+        AbsenceType(
+          code: 'CA',
+          libelle: 'Congé annuel',
+          color: const Color(0xFF378ADD),
+        ),
+        AbsenceType(
+          code: 'CR',
+          libelle: 'Congé récupération',
+          color: const Color(0xFF1D9E75),
+        ),
+        AbsenceType(
+          code: 'CS',
+          libelle: 'Congé sans solde',
+          color: const Color(0xFF8E44AD),
+        ),
+        AbsenceType(
+          code: 'CEX',
+          libelle: 'Congé exceptionnel',
+          color: const Color(0xFF9B59B6),
+        ),
+        AbsenceType(
+          code: 'CQ',
+          libelle: 'Congé de quarantaine',
+          color: const Color(0xFF16A085),
+        ),
+      ],
+    ),
+    AbsenceCategory(
+      title: '🔵 Maladie & santé',
+      types: [
+        AbsenceType(
+          code: 'CM',
+          libelle: 'Congé maladie',
+          color: const Color(0xFFE24B4A),
+        ),
+        AbsenceType(
+          code: 'CML',
+          libelle: 'Congé maladie longue durée',
+          color: const Color(0xFFC0392B),
+        ),
+        AbsenceType(
+          code: 'AT',
+          libelle: 'Accident de travail',
+          color: const Color(0xFFE67E22),
+        ),
+        AbsenceType(
+          code: 'MP',
+          libelle: 'Maladie professionnelle',
+          color: const Color(0xFFD35400),
+        ),
+        AbsenceType(
+          code: 'REPOS',
+          libelle: 'Repos médical',
+          color: const Color(0xFF27AE60),
+        ),
+      ],
+    ),
+    AbsenceCategory(
+      title: '🟣 Événements familiaux',
+      types: [
+        AbsenceType(
+          code: 'CMAT',
+          libelle: 'Congé maternité',
+          color: const Color(0xFF2980B9),
+        ),
+        AbsenceType(
+          code: 'CPAT',
+          libelle: 'Congé paternité',
+          color: const Color(0xFF3498DB),
+        ),
+        AbsenceType(
+          code: 'CNA',
+          libelle: 'Congé naissance',
+          color: const Color(0xFF1ABC9C),
+        ),
+        AbsenceType(
+          code: 'CMAR',
+          libelle: 'Congé mariage',
+          color: const Color(0xFF9B59B6),
+        ),
+        AbsenceType(
+          code: 'CD',
+          libelle: 'Congé décès',
+          color: const Color(0xFF2C3E50),
+        ),
+      ],
+    ),
+    AbsenceCategory(
+      title: '🟠 Autorisations & administratif',
+      types: [
+        AbsenceType(
+          code: 'AUT',
+          libelle: 'Autorisation d’absence',
+          color: const Color(0xFF7F8C8D),
+        ),
+        AbsenceType(
+          code: 'ABSJ',
+          libelle: 'Absence justifiée',
+          color: const Color(0xFF95A5A6),
+        ),
+        AbsenceType(
+          code: 'ABNJ',
+          libelle: 'Absence non justifiée',
+          color: const Color(0xFFE74C3C),
+        ),
+        AbsenceType(
+          code: 'CONV',
+          libelle: 'Convocation officielle',
+          color: const Color(0xFF34495E),
+        ),
+        AbsenceType(
+          code: 'VIS',
+          libelle: 'Visite médicale',
+          color: const Color(0xFF16A085),
+        ),
+      ],
+    ),
+    AbsenceCategory(
+      title: '🟡 Activité professionnelle',
+      types: [
+        AbsenceType(
+          code: 'MIS',
+          libelle: 'Mission',
+          color: const Color(0xFF2980B9),
+        ),
+        AbsenceType(
+          code: 'FOR',
+          libelle: 'Formation',
+          color: const Color(0xFFBA7517),
+        ),
+        AbsenceType(
+          code: 'STG',
+          libelle: 'Stage',
+          color: const Color(0xFF8E44AD),
+        ),
+        AbsenceType(
+          code: 'DET',
+          libelle: 'Détachement',
+          color: const Color(0xFF2C3E50),
+        ),
+      ],
+    ),
+    AbsenceCategory(
+      title: '🔴 Situations particulières',
+      types: [
+        AbsenceType(
+          code: 'DISP',
+          libelle: 'Disponibilité',
+          color: const Color(0xFF7F8C8D),
+        ),
+        AbsenceType(
+          code: 'SUSP',
+          libelle: 'Suspension',
+          color: const Color(0xFFE74C3C),
+        ),
+        AbsenceType(
+          code: 'GRE',
+          libelle: 'Grève',
+          color: const Color(0xFF2C3E50),
+        ),
+      ],
+    ),
+  ];
+
+  List<PlageDate> _getPlages(String code) {
+    return releve.absences.where((p) => p.motif == code).toList();
+  }
+
+  void _updatePlages(String code, List<PlageDate> newPlages) {
+    final other = releve.absences.where((p) => p.motif != code).toList();
+    final updated = [...other, ...newPlages];
+    onChange(releve.copyWith(absences: updated));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,134 +222,53 @@ class TabAbsences extends StatelessWidget {
       padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _AbsenceSection(
-            code: 'CM',
-            libelle: 'Congé Maladie',
-            color: const Color(0xFFE24B4A),
-            plages: _r.absencesCM,
-            mois: mois,
-            annee: annee,
-            onAdd: (p) {
-              final l = List<PlageDate>.from(_r.absencesCM)..add(p);
-              onChange(_copy(cm: l));
-            },
-            onDelete: (i) {
-              final l = List<PlageDate>.from(_r.absencesCM)..removeAt(i);
-              onChange(_copy(cm: l));
-            },
-            onEdit: (i, p) {
-              final l = List<PlageDate>.from(_r.absencesCM)..[i] = p;
-              onChange(_copy(cm: l));
-            },
-          ),
-          const SizedBox(height: 16),
-          _AbsenceSection(
-            code: 'CP',
-            libelle: 'Congé Payé',
-            color: const Color(0xFF1D9E75),
-            plages: _r.absencesCP,
-            mois: mois,
-            annee: annee,
-            onAdd: (p) {
-              final l = List<PlageDate>.from(_r.absencesCP)..add(p);
-              onChange(_copy(cp: l));
-            },
-            onDelete: (i) {
-              final l = List<PlageDate>.from(_r.absencesCP)..removeAt(i);
-              onChange(_copy(cp: l));
-            },
-            onEdit: (i, p) {
-              final l = List<PlageDate>.from(_r.absencesCP)..[i] = p;
-              onChange(_copy(cp: l));
-            },
-          ),
-          const SizedBox(height: 16),
-          _AbsenceSection(
-            code: 'CA',
-            libelle: 'Congé Annuel',
-            color: const Color(0xFF378ADD),
-            plages: _r.absencesCA,
-            mois: mois,
-            annee: annee,
-            onAdd: (p) {
-              final l = List<PlageDate>.from(_r.absencesCA)..add(p);
-              onChange(_copy(ca: l));
-            },
-            onDelete: (i) {
-              final l = List<PlageDate>.from(_r.absencesCA)..removeAt(i);
-              onChange(_copy(ca: l));
-            },
-            onEdit: (i, p) {
-              final l = List<PlageDate>.from(_r.absencesCA)..[i] = p;
-              onChange(_copy(ca: l));
-            },
-          ),
-          const SizedBox(height: 16),
-          _AbsenceSection(
-            code: 'FM',
-            libelle: 'Formation',
-            color: const Color(0xFFBA7517),
-            plages: _r.absencesFM,
-            mois: mois,
-            annee: annee,
-            onAdd: (p) {
-              final l = List<PlageDate>.from(_r.absencesFM)..add(p);
-              onChange(_copy(fm: l));
-            },
-            onDelete: (i) {
-              final l = List<PlageDate>.from(_r.absencesFM)..removeAt(i);
-              onChange(_copy(fm: l));
-            },
-            onEdit: (i, p) {
-              final l = List<PlageDate>.from(_r.absencesFM)..[i] = p;
-              onChange(_copy(fm: l));
-            },
-          ),
-        ],
+        children: _categories.expand((category) {
+          return [
+            Padding(
+              padding: const EdgeInsets.only(left: 4, top: 16, bottom: 8),
+              child: Text(
+                category.title,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            ...category.types.map((type) {
+              final plages = _getPlages(type.code);
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: _AbsenceSection(
+                  type: type,
+                  plages: plages,
+                  mois: mois,
+                  annee: annee,
+                  onChange: (newPlages) => _updatePlages(type.code, newPlages),
+                ),
+              );
+            }),
+          ];
+        }).toList(),
       ),
     );
   }
-
-  Releve _copy({
-    List<PlageDate>? cm,
-    List<PlageDate>? cp,
-    List<PlageDate>? ca,
-    List<PlageDate>? fm,
-  }) => Releve(
-    employeId: _r.employeId,
-    mois: _r.mois,
-    annee: _r.annee,
-    absencesCM: cm ?? List.from(_r.absencesCM),
-    absencesCP: cp ?? List.from(_r.absencesCP),
-    absencesCA: ca ?? List.from(_r.absencesCA),
-    absencesFM: fm ?? List.from(_r.absencesFM),
-    imputations: List.from(_r.imputations),
-    heuresSupp: List.from(_r.heuresSupp),
-    astreintes: List.from(_r.astreintes),
-  );
 }
 
-// ─── Section par type d'absence ───────────────────────────────────────────────
+// ==================== SECTION ABSENCE ====================
+
 class _AbsenceSection extends StatelessWidget {
-  final String code, libelle;
-  final Color color;
+  final AbsenceType type;
   final List<PlageDate> plages;
   final int mois, annee;
-  final void Function(PlageDate) onAdd;
-  final void Function(int) onDelete;
-  final void Function(int, PlageDate) onEdit;
+  final void Function(List<PlageDate>) onChange;
 
   const _AbsenceSection({
-    required this.code,
-    required this.libelle,
-    required this.color,
+    super.key,
+    required this.type,
     required this.plages,
     required this.mois,
     required this.annee,
-    required this.onAdd,
-    required this.onDelete,
-    required this.onEdit,
+    required this.onChange,
   });
 
   @override
@@ -166,7 +281,6 @@ class _AbsenceSection extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // Header
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
             child: Row(
@@ -177,63 +291,69 @@ class _AbsenceSection extends StatelessWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.1),
+                    color: type.color.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(6),
                     border: Border.all(
-                      color: color.withOpacity(0.3),
+                      color: type.color.withOpacity(0.3),
                       width: 0.5,
                     ),
                   ),
                   child: Text(
-                    code,
+                    type.code,
                     style: TextStyle(
                       fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                      color: color,
+                      fontWeight: FontWeight.w600,
+                      color: type.color,
                     ),
                   ),
                 ),
                 const SizedBox(width: 10),
-                Text(
-                  libelle,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
+                Expanded(
+                  child: Text(
+                    type.libelle,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
-                const Spacer(),
                 TextButton.icon(
                   onPressed: () => _showPlageDialog(context, null, null),
-                  icon: Icon(Icons.add, size: 15, color: color),
-                  label: Text(
-                    'Ajouter une plage',
-                    style: TextStyle(fontSize: 12, color: color),
-                  ),
+                  icon: Icon(Icons.add, size: 16, color: type.color),
+                  label: const Text('Ajouter', style: TextStyle(fontSize: 12)),
                 ),
               ],
             ),
           ),
-          if (plages.isNotEmpty) ...[
+
+          if (plages.isNotEmpty)
             const Divider(height: 1, color: AppTheme.border),
+
+          if (plages.isNotEmpty)
             ...plages.asMap().entries.map(
               (e) => _PlageRow(
                 plage: e.value,
-                color: color,
+                color: type.color,
                 onEdit: () => _showPlageDialog(context, e.key, e.value),
-                onDelete: () => onDelete(e.key),
+                onDelete: () => _deletePlage(e.key),
               ),
-            ),
-          ] else
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+            )
+          else
+            const Padding(
+              padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
               child: Text(
-                'Aucune plage de $code saisie.',
-                style: const TextStyle(fontSize: 12, color: AppTheme.textMuted),
+                'Aucune plage saisie.',
+                style: TextStyle(fontSize: 12, color: AppTheme.textMuted),
               ),
             ),
         ],
       ),
     );
+  }
+
+  void _deletePlage(int index) {
+    final updated = List<PlageDate>.from(plages)..removeAt(index);
+    onChange(updated);
   }
 
   void _showPlageDialog(BuildContext context, int? index, PlageDate? existing) {
@@ -243,36 +363,32 @@ class _AbsenceSection extends StatelessWidget {
     showDialog(
       context: context,
       builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setS) => AlertDialog(
+        builder: (ctx, setState) => AlertDialog(
           title: Text(
             index == null
-                ? 'Ajouter une plage $code'
-                : 'Modifier la plage $code',
-            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+                ? 'Ajouter une plage ${type.code}'
+                : 'Modifier la plage ${type.code}',
           ),
           content: SizedBox(
-            width: 340,
+            width: 360,
             child: Row(
               children: [
                 Expanded(
                   child: _DatePickerField(
                     label: 'Du',
                     value: debut,
-                    onPick: (d) => setS(() => debut = d),
+                    onPick: (d) => setState(() => debut = d),
                   ),
                 ),
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 12),
-                  child: Text(
-                    'au',
-                    style: TextStyle(fontSize: 12, color: AppTheme.textMuted),
-                  ),
+                  child: Text('au'),
                 ),
                 Expanded(
                   child: _DatePickerField(
                     label: 'Au',
                     value: fin,
-                    onPick: (d) => setS(() => fin = d),
+                    onPick: (d) => setState(() => fin = d),
                   ),
                 ),
               ],
@@ -286,14 +402,20 @@ class _AbsenceSection extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 if (debut == null || fin == null) return;
-                final p = PlageDate(
+                if (fin!.isBefore(debut!)) fin = debut;
+
+                final newPlage = PlageDate(
                   debut: debut!,
-                  fin: fin!.isBefore(debut!) ? debut! : fin!,
+                  fin: fin!,
+                  motif: type.code, // ← Important
                 );
-                if (index == null)
-                  onAdd(p);
-                else
-                  onEdit(index, p);
+
+                final newList = List<PlageDate>.from(plages);
+                index == null
+                    ? newList.add(newPlage)
+                    : newList[index] = newPlage;
+
+                onChange(newList);
                 Navigator.pop(ctx);
               },
               child: const Text('Valider'),
@@ -308,8 +430,11 @@ class _AbsenceSection extends StatelessWidget {
 class _PlageRow extends StatelessWidget {
   final PlageDate plage;
   final Color color;
-  final VoidCallback onEdit, onDelete;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
+
   const _PlageRow({
+    super.key,
     required this.plage,
     required this.color,
     required this.onEdit,
@@ -319,14 +444,14 @@ class _PlageRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final fmt = DateFormat('dd/MM/yyyy');
-    final isSame =
+    final isSameDay =
         plage.debut.year == plage.fin.year &&
         plage.debut.month == plage.fin.month &&
         plage.debut.day == plage.fin.day;
     final nbJours = plage.fin.difference(plage.debut).inDays + 1;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: const BoxDecoration(
         border: Border(top: BorderSide(color: AppTheme.border, width: 0.5)),
       ),
@@ -334,31 +459,31 @@ class _PlageRow extends StatelessWidget {
         children: [
           Container(
             width: 4,
-            height: 32,
+            height: 36,
             decoration: BoxDecoration(
               color: color,
-              borderRadius: BorderRadius.circular(2),
+              borderRadius: BorderRadius.circular(3),
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  isSame
+                  isSameDay
                       ? fmt.format(plage.debut)
-                      : '${fmt.format(plage.debut)}  →  ${fmt.format(plage.fin)}',
+                      : '${fmt.format(plage.debut)} → ${fmt.format(plage.fin)}',
                   style: const TextStyle(
-                    fontSize: 13,
+                    fontSize: 13.5,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                if (!isSame)
+                if (!isSameDay)
                   Text(
                     '$nbJours jour${nbJours > 1 ? "s" : ""}',
                     style: const TextStyle(
-                      fontSize: 11,
+                      fontSize: 11.5,
                       color: AppTheme.textMuted,
                     ),
                   ),
@@ -366,19 +491,13 @@ class _PlageRow extends StatelessWidget {
             ),
           ),
           IconButton(
-            icon: const Icon(
-              Icons.edit_outlined,
-              size: 16,
-              color: AppTheme.primary,
-            ),
+            icon: const Icon(Icons.edit_outlined, size: 18),
+            color: AppTheme.primary,
             onPressed: onEdit,
           ),
           IconButton(
-            icon: const Icon(
-              Icons.delete_outline,
-              size: 16,
-              color: AppTheme.danger,
-            ),
+            icon: const Icon(Icons.delete_outline, size: 18),
+            color: AppTheme.danger,
             onPressed: onDelete,
           ),
         ],
@@ -391,7 +510,9 @@ class _DatePickerField extends StatelessWidget {
   final String label;
   final DateTime? value;
   final void Function(DateTime) onPick;
+
   const _DatePickerField({
+    super.key,
     required this.label,
     this.value,
     required this.onPick,
@@ -407,20 +528,20 @@ class _DatePickerField extends StatelessWidget {
           label,
           style: const TextStyle(fontSize: 11, color: AppTheme.textMuted),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 6),
         GestureDetector(
           onTap: () async {
-            final d = await showDatePicker(
+            final picked = await showDatePicker(
               context: context,
               initialDate: value ?? DateTime.now(),
               firstDate: DateTime(2020),
               lastDate: DateTime(2040),
-              locale: const Locale('fr'),
+              locale: const Locale('fr', 'FR'),
             );
-            if (d != null) onPick(d);
+            if (picked != null) onPick(picked);
           },
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             decoration: BoxDecoration(
               color: AppTheme.bgSecondary,
               borderRadius: BorderRadius.circular(8),
@@ -432,7 +553,7 @@ class _DatePickerField extends StatelessWidget {
                   child: Text(
                     value != null ? fmt.format(value!) : 'JJ/MM/AAAA',
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 13,
                       color: value != null
                           ? Colors.black87
                           : AppTheme.textMuted,
@@ -441,7 +562,7 @@ class _DatePickerField extends StatelessWidget {
                 ),
                 const Icon(
                   Icons.calendar_today_outlined,
-                  size: 13,
+                  size: 16,
                   color: AppTheme.textMuted,
                 ),
               ],
