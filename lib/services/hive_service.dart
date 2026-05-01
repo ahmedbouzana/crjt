@@ -12,7 +12,7 @@ class HiveService {
 
   static Future<void> init() async {
     // 1. Supprimer les anciens fichiers AVANT d'initialiser Hive
-    if (!kIsWeb) {
+    /* if (!kIsWeb) {
       try {
         final dir = await getApplicationDocumentsDirectory();
         for (final boxName in [_settingsBox, _employesBox, _relevesBox]) {
@@ -25,7 +25,7 @@ class HiveService {
       } catch (e) {
         debugPrint('Hive: Erreur suppression fichiers : $e');
       }
-    }
+    } */
 
     // 2. Initialiser Hive
     await Hive.initFlutter();

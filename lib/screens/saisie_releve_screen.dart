@@ -1,4 +1,4 @@
-import 'package:crjt/services/test_pdf_export_service.dart';
+import 'package:crjt/services/pdf_export_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:printing/printing.dart';
@@ -82,7 +82,7 @@ class _SaisieReleveScreenState extends State<SaisieReleveScreen>
     try {
       if (_dirty) await _save();
 
-      final service = TestPdfExportService(
+      final service = PdfExportService(
         settings: _settings,
         employe: widget.employe,
         releve: _releve,
